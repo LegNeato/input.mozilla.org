@@ -148,6 +148,16 @@ LATEST_RELEASE = {
               product_details.mobile_details['version']),
 }
 
+RELEASE_DATES = {
+    FIREFOX: dict(
+                product_details.firefox_history_major_releases.items() +
+                product_details.firefox_history_stability_releases.items() +
+                product_details.firefox_history_development_releases.items()),
+    MOBILE: dict(
+                product_details.mobile_history_major_releases.items() +
+                product_details.mobile_history_stability_releases.items() +
+                product_details.mobile_history_development_releases.items()),
+}
 
 # Operating Systems
 class WINDOWS_XP:

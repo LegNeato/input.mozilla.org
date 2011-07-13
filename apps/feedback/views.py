@@ -8,6 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.vary import vary_on_headers
 
 import jingo
+from datetime import datetime
+from product_details import product_details
 from product_details.version_compare import Version
 from tower import ugettext as _
 
@@ -45,8 +47,20 @@ def enforce_ua(f):
 
         this_ver = Version(parsed['version'])
         ref_ver = Version(input.LATEST_RELEASE[parsed['browser']])
-        # Check for outdated release.
-        if this_ver < ref_ver:
+
+        this_date = datetime.now()
+        try:
+            # Try to get the release date
+            ref_date = datetime.strptime(input.RELEASE_DATES[parsed['browser']][input.LATEST_RELEASE[parsed['browser']]],
+                                         '%Y-%m-%d')
+        except KeyError:
+            # Default to released today if issues are found
+            ref_date = this_date
+
+        delta = this_date - ref_date
+
+        # Check for outdated release, allow old versions for 3 days after a release
+        if this_ver < ref_ver and delta.days > 3:
             return http.HttpResponseRedirect(reverse('feedback.download'))
 
         # If we made it here, it's a valid version.
